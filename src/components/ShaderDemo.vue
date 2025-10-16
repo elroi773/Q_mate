@@ -58,8 +58,8 @@ export default {
       cursorY: 0,
       mouseX: 0,
       mouseY: 0,
-      colors: ["#225ee1", "#28d7bf", "#ac53cf", "#e7a39c"],
-      backgroundColor: "#31AFD4",
+      colors: ["#225ee1", "#28d7bf", "#779ED5", "#FBECB3"],
+      backgroundColor: "#ffffff",
       shader: null
     }
   },
