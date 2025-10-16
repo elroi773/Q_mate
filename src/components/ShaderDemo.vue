@@ -1,5 +1,6 @@
 <template>
   <div class="shader-demo">
+    
     <!-- Custom Cursor -->
     <div ref="cursor" class="custom-cursor" :style="{ left: cursorX + 'px', top: cursorY + 'px' }"></div>
 
@@ -21,13 +22,6 @@
 
           <!-- 메인 콘텐츠 -->
           <div class="content">
-            <!-- <div class="speech left">그럼 면접 상황에 따라 내 면접 상태를</div>
-            <div class="speech left">AI 로 체크할 수 있는 모의 면접 서비스를</div>
-            <br>
-            <br>
-            <div class="speech left">사용해봐!</div>
-            <div class="speech right">면접 준비 어떻게 해야할지 모르겠어 ㅠㅠ</div> -->
-
             <h1>
               INTERVIEW WITH ME<br />
               <span class="highlight">AND AI</span>
@@ -35,8 +29,8 @@
             <p class="subtitle">모의 면접 연습 플랫폼</p>
 
             <div class="buttons">
-              <button class="play">Play</button>
-              <button class="login">Login</button>
+              <button class="play" @click = "goToPlay">Play</button>
+              <button class="login" @click = "goToLogin">Login</button>
             </div>
           </div>
         </div>
@@ -48,6 +42,17 @@
 <script>
 // Import p5.js
 import p5 from 'p5'
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+
+// function goToPlay(){
+//   router.push('/question-ready')
+// }
+
+// function goToLogin(){
+//   router.push('/login')
+// }
 
 export default {
   name: 'ShaderDemo',
@@ -58,7 +63,7 @@ export default {
       cursorY: 0,
       mouseX: 0,
       mouseY: 0,
-      colors: ["#225ee1", "#28d7bf", "#779ED5", "#FBECB3"],
+      colors: ["#EF634D", "#FFD66D", "#EC3E73", "#0088FF"],
       backgroundColor: "#ffffff",
       shader: null
     }
@@ -106,11 +111,6 @@ export default {
       cursor.style.borderColor = 'rgba(255, 255, 255, 0.5)'
     },
 
-    goToIntro() {
-      // Navigate to intro page - adjust according to your routing
-      this.$router?.push('/intro')
-    },
-
     removeEventListeners() {
       document.removeEventListener('mousemove', this.handleMouseMove)
     },
@@ -122,6 +122,12 @@ export default {
       return [r / 255, g / 255, b / 255]
     },
 
+    goToPlay(){
+      this.$router.push('/question-ready')
+    },
+    goToLogin(){
+      this.$router.push('/login')
+    },
     initP5() {
       const sketch = (p) => {
         let s
@@ -630,7 +636,7 @@ h4 {
 h1 {
   font-size: clamp(20px, 5vw, 36px); /* 반응형 글씨 */
   font-weight: bold;
-  color: #75b8ff;
+  color: rgba(0, 123, 255, 0.9);
 }
 
 .highlight {
@@ -741,7 +747,7 @@ button {
     rgba(255, 255, 255, 0.15),
     rgba(255, 255, 255, 0.05)
   );
-  color: rgba(255, 255, 255, 0.9);
+  color:  rgba(0, 123, 255, 0.9);
   box-shadow: 
     0 8px 25px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
