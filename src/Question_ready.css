@@ -1,0 +1,487 @@
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Thin.woff') format('woff');
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Light.woff') format('woff');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff') format('woff');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff') format('woff');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraBold.woff') format('woff');
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Black.woff') format('woff');
+  font-weight: 900;
+  font-display: swap;
+}
+*{
+  font-family: 'Pretendard';
+}
+/* 기본 레이아웃 */
+.min-h-screen {
+    min-height: 100vh;
+  }
+  
+  .bg-gray-50 {
+    background-color: #f9fafb;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .max-w-7xl {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* 제목 */
+  .text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+  
+  .font-bold {
+    font-weight: 700;
+  }
+  
+  .mb-8 {
+    margin-bottom: 2rem;
+  }
+  
+  /* 섹션 제목 */
+  .text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+  
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  /* 버튼 스타일 */
+  .flex {
+    display: flex;
+  }
+  
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  
+  .gap-3 {
+    gap: 0.75rem;
+  }
+  
+  button {
+    width: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  .font-medium {
+    font-weight: 500;
+  }
+  
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+  
+  .bg-blue-500 {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .bg-blue-500:hover {
+    background-color: #2563eb;
+  }
+  
+  .bg-white {
+    background-color: white;
+  }
+  
+  .text-gray-700 {
+    color: #374151;
+  }
+  
+  .border {
+    border-width: 1px;
+  }
+  
+  .border-gray-300 {
+    border-color: #d1d5db;
+  }
+  
+  .hover\:border-blue-500:hover {
+    border-color: #3b82f6;
+  }
+  
+  /* Grid Layout */
+  .grid {
+    display: grid;
+  }
+  
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 1024px) {
+    .lg\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  .gap-8 {
+    gap: 2rem;
+  }
+  
+  /* 카드 */
+  .bg-white {
+    background-color: white;
+  }
+  
+  .rounded-lg {
+    border-radius: 0.5rem;
+  }
+  
+  .shadow {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .h-fit {
+    height: fit-content;
+  }
+  
+  /* 사진 업로드 */
+  .border-2 {
+    border-width: 2px;
+  }
+  
+  .border-dashed {
+    border-style: dashed;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .hover\:border-blue-500:hover {
+    border-color: #3b82f6;
+  }
+  
+  .transition-colors {
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .relative {
+    position: relative;
+  }
+  
+  .w-full {
+    width: 100%;
+  }
+  
+  .h-64 {
+    height: 16rem;
+  }
+  
+  .object-cover {
+    object-fit: cover;
+  }
+  
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  
+  .absolute {
+    position: absolute;
+  }
+  
+  .top-2 {
+    top: 0.5rem;
+  }
+  
+  .right-2 {
+    right: 0.5rem;
+  }
+  
+  .bg-red-500 {
+    background-color: #ef4444;
+  }
+  
+  .bg-red-500:hover {
+    background-color: #dc2626;
+  }
+  
+  .text-white {
+    color: white;
+  }
+  
+  .p-1 {
+    padding: 0.25rem;
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  /* 안내 문구 */
+  .text-gray-500 {
+    color: #6b7280;
+  }
+  
+  .text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
+  .text-gray-400 {
+    color: #9ca3af;
+  }
+  
+  /* 질문 섹션 */
+  .lg\:col-span-2 {
+    grid-column: span 2 / span 2;
+  }
+  
+  .text-gray-600 {
+    color: #4b5563;
+  }
+  
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 스크롤 컨테이너 */
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+  
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  
+  .pb-4 {
+    padding-bottom: 1rem;
+  }
+  
+  .flex-shrink-0 {
+    flex-shrink: 0;
+  }
+  
+  .min-w-min {
+    min-width: min-content;
+  }
+  
+  .px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+  
+  /* 질문 카드 */
+  .w-96 {
+    width: 24rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .text-gray-700 {
+    color: #374151;
+  }
+  
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+  }
+  
+  /* input & textarea */
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  
+  input:focus,
+  textarea:focus {
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  /* 추가 버튼 */
+  .bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, #60a5fa, #2563eb);
+  }
+  
+  .hover\:from-blue-500:hover {
+    background-image: linear-gradient(to bottom right, #3b82f6, #2563eb);
+  }
+  
+  .hover\:to-blue-700:hover {
+    background-image: linear-gradient(to bottom right, #3b82f6, #1d4ed8);
+  }
+  
+  .text-white {
+    color: white;
+  }
+  
+  .rounded-lg {
+    border-radius: 0.5rem;
+  }
+  
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hover\:shadow-xl:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+  
+  .flex-col {
+    flex-direction: column;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .justify-center {
+    justify-content: center;
+  }
+  
+  .gap-3 {
+    gap: 0.75rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .group:hover .group-hover\:bg-white\/30 {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .bg-white\/20 {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  .p-3 {
+    padding: 0.75rem;
+  }
+  
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  
+  .opacity-90 {
+    opacity: 0.9;
+  }
+  
+  /* 팁 텍스트 */
+  .text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280;
+  }
+  
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  
