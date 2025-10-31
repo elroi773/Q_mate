@@ -172,6 +172,21 @@ function scroll(direction) {
   }
 }
 function goNext() {
+  // 폼 데이터 예시 (폼 데이터는 실제로 폼에서 가져와야 합니다)
+  const formData = {
+    name: 'John Doe', // 예시 데이터
+    email: 'john.doe@example.com', // 예시 데이터
+  }
+
+  // 로컬 스토리지에 데이터 저장
+  try {
+    localStorage.setItem('formData', JSON.stringify(formData))
+    console.log('폼 데이터가 로컬 스토리지에 성공적으로 저장되었습니다.')
+  } catch (error) {
+    console.error('로컬 스토리지 저장 중 오류가 발생했습니다:', error)
+  }
+
+  // 다음 페이지로 이동
   router.push('/interview')
 }
 </script>
