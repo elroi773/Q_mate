@@ -311,3 +311,29 @@
     order: 3;
   }
 }
+
+.interview-container {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.interview-container button {
+  margin: 5px;
+  padding: 8px 12px;
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.interview-container button:hover {
+  background-color: #1e293b;
+}
+
+.interview-container button:active {
+  background-color: #334155;
+}
