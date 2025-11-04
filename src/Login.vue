@@ -1,18 +1,40 @@
 <template>
   <div class="login-container">
-    <h2>로그인</h2>
-    <input
-      v-model="id"
-      type="text"
-      placeholder="아이디"
-    />
-    <input
-      v-model="password"
-      type="password"
-      placeholder="비밀번호"
-    />
-    <button @click="login">로그인</button>
-    <p v-if="message">{{ message }}</p>
+    <h2 class="title">로그인</h2>
+
+    <form class="form" @submit.prevent="login">
+      <label class="label" for="id">아이디</label>
+      <input
+        id="id"
+        v-model.trim="id"
+        type="text"
+        class="input"
+        placeholder="아이디를 입력하세요"
+        autocomplete="username"
+        required
+      />
+
+      <label class="label" for="password">비밀번호</label>
+      <input
+        id="password"
+        v-model="password"
+        type="password"
+        class="input"
+        placeholder="비밀번호를 입력하세요"
+        autocomplete="current-password"
+        required
+      />
+
+      <button type="submit" class="btn-primary">로그인</button>
+    </form>
+
+    <!-- 하단: 회원가입(작게) -->
+    <div class="login-cta">
+      <!-- 라우터 쓰면 <router-link to="/join" class="btn-link">회원가입</router-link> -->
+      <a href="/join" class="btn-link">회원가입</a>
+    </div>
+
+    <p v-if="message" class="message">{{ message }}</p>
   </div>
 </template>
 
@@ -31,7 +53,6 @@ export default {
       if (this.id === "admin" && this.password === "1234") {
         this.message = "로그인 성공!";
         alert(`환영합니다, ${this.id}님!`);
-        // 예: 메인 페이지로 이동
         // this.$router.push("/home");
       } else {
         this.message = "아이디 또는 비밀번호가 잘못되었습니다.";
@@ -41,54 +62,5 @@ export default {
 };
 </script>
 
-<style scoped>
-.login-container {
-  font-family: "GmarketSansMedium", sans-serif;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  padding: 40px;
-  width: 320px;
-  margin: 100px auto;
-  text-align: center;
-}
-
-h2 {
-  color: #4cae4f;
-  margin-bottom: 20px;
-}
-
-input {
-  width: 90%;
-  padding: 10px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 10px;
-  outline: none;
-  background: #f5f5f5;
-}
-
-button {
-  width: 95%;
-  padding: 10px;
-  margin-top: 15px;
-  background-color: #4cae4f;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #3a8c3f;
-}
-
-p {
-  color: #ffdddd;
-  font-size: 0.9em;
-  margin-top: 10px;
-}
-</style>
+<!-- 분리된 CSS 파일 -->
+<style src="./Login.css"></style>
