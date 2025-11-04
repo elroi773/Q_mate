@@ -84,15 +84,6 @@
   import { computed, onMounted, ref, nextTick } from 'vue'
   import './Result.css'
   
-  /**
-   * 저장 포맷 가정:
-   * localStorage.interviewForm = {
-   *   position: "취업",
-   *   photo: "data:image/png;base64,...",
-   *   questions: [{ id, title, content }, ...],
-   *   savedAt: "ISO-STRING"
-   * }
-   */
   const STORAGE_KEY = 'interviewForm'
   
   // ===== 화면 상태 =====
