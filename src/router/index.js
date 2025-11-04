@@ -1,23 +1,34 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
+
+// 페이지 컴포넌트
 import ShaderDemo from '../components/ShaderDemo.vue'
 import QuestionReady from '../Question_ready.vue'
 import Login from '../Login.vue'
 import Interview from '../Interview.vue'
 import Result from '../Result.vue'
-import Join from "../Join.vue"
+import Join from '../Join.vue' // 경로는 그대로, 라우트 path는 보통 소문자 추천
 
 const routes = [
-  { path: '/', component: ShaderDemo }, // ✅ 기본 진입점
-  { path: '/question-ready', component: QuestionReady },
-  { path: '/login', component: Login },
-  { path: '/Join', component: Join },
-  { path: '/interview', component: Interview },
-  { path: '/result', component: Result },
+  { path: '/', name: 'home', component: ShaderDemo },            // 기본 진입점
+  { path: '/question-ready', name: 'question-ready', component: QuestionReady },
+  { path: '/login', name: 'login', component: Login },
+  { path: '/join', name: 'join', component: Join },              // '/Join' → '/join' 권장
+  { path: '/interview', name: 'interview', component: Interview },
+  { path: '/result', name: 'result', component: Result },
+
+  // 404
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: ShaderDemo },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  // ✅ 이 위치가 맞습니다
+  scrollBehavior() {
+    // 라우트 전환 시 항상 맨 위로
+    return { top: 0 }
+  },
 })
 
 export default router
