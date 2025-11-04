@@ -1,0 +1,35 @@
+/* 사용자 접근성: 모션 최소화 환경에선 페이드만 */
+@media (prefers-reduced-motion: reduce) {
+    .slide-enter-active,
+    .slide-leave-active { transition: opacity .18s ease; }
+    .slide-enter-from,
+    .slide-leave-to { opacity: 0; transform: none !important; }
+  }
+  
+  /* 기본 트랜지션 속성 */
+  .slide-enter-active,
+  .slide-leave-active {
+    will-change: transform, opacity, box-shadow;
+    transition: transform .36s cubic-bezier(.22,.61,.36,1), opacity .36s ease;
+  }
+  
+  /* “앞으로 가기” = 오른쪽 → 왼쪽 */
+  .forward .slide-enter-from { transform: translateX(20px) scale(.995); opacity: 0.01; }
+  .forward .slide-enter-to   { transform: translateX(0)      scale(1);    opacity: 1;   }
+  .forward .slide-leave-from  { transform: translateX(0)      scale(1);    opacity: 1;   }
+  .forward .slide-leave-to    { transform: translateX(-40px)  scale(.995); opacity: 0;   }
+  
+  /* “뒤로 가기” = 왼쪽 → 오른쪽 */
+  .back .slide-enter-from { transform: translateX(-20px) scale(.995); opacity: 0.01; }
+  .back .slide-enter-to   { transform: translateX(0)      scale(1);    opacity: 1;    }
+  .back .slide-leave-from { transform: translateX(0)      scale(1);    opacity: 1;    }
+  .back .slide-leave-to   { transform: translateX(40px)   scale(.995); opacity: 0;    }
+  
+  /* 살짝 PPT 같은 깊이감(그림자) */
+  .slide-enter-active > *,
+  .slide-leave-active > * {
+    box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    border-radius: 10px;
+    background: transparent;
+  }
+  
