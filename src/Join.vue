@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { supabase } from "../supabaseClient"; // 경로는 프로젝트에 맞게 조정
+import { supabase } from "../supabaseClient";
 import bcrypt from "bcryptjs";
 
 export default {
@@ -97,18 +97,17 @@ export default {
       photoFile: null,
       photoUrl: "",
       message: "",
-      submitting: false, // 버튼 중복 클릭 방지
+      submitting: false,
     };
   },
   methods: {
     triggerFile() {
-      this.$refs.fileInput && this.$refs.fileInput.click();
+      if (this.$refs.fileInput) this.$refs.fileInput.click();
     },
     onFileChange(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
-      // 간단 유효성 검사
       const isImage = /^image\/(png|jpeg)$/.test(file.type);
       const under5MB = file.size <= 5 * 1024 * 1024;
 
@@ -122,7 +121,7 @@ export default {
       }
 
       this.photoFile = file;
-      this.photoUrl && URL.revokeObjectURL(this.photoUrl);
+      if (this.photoUrl) URL.revokeObjectURL(this.photoUrl);
       this.photoUrl = URL.createObjectURL(file);
       this.message = "";
     },
@@ -133,9 +132,7 @@ export default {
       if (this.$refs.fileInput) this.$refs.fileInput.value = "";
     },
 
-    // ✅ Supabase 저장 로직
     async onSubmit() {
-      // 0) 프론트 유효성 검사
       if (this.name.length < 2) {
         this.message = "이름은 2자 이상 입력해주세요.";
         return;
@@ -149,10 +146,9 @@ export default {
       this.message = "";
 
       try {
-        // 1) (선택) 아바타 업로드 → public URL 확보
+        // 1) (선택) 아바타 업로드
         let uploadedUrl = null;
         if (this.photoFile) {
-          // ⚠ key에는 'avatars/'(버킷명)를 넣지 말 것! — 중복 경로 방지
           const key = `${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
 
           const { error: upErr } = await supabase.storage
@@ -162,30 +158,33 @@ export default {
               upsert: true,
               contentType: this.photoFile.type || "image/jpeg",
             });
-          if (upErr) throw upErr;
 
-          // 공개 버킷이면 public URL 사용
-          const { data: pub } = supabase.storage.from("avatars").getPublicUrl(key);
-          uploadedUrl = pub?.publicUrl ?? null;
-
-          // private 버킷일 경우
-          // const { data: signed } = await supabase.storage.from('avatars').createSignedUrl(key, 3600);
-          // uploadedUrl = signed?.signedUrl ?? null;
+          if (upErr) {
+            console.error("Upload error:", upErr);
+            // 업로드 실패 시 가입 자체를 중단하려면 다음 줄의 주석을 해제하세요.
+            // throw upErr;
+          } else {
+            const { data: pub } = supabase.storage.from("avatars").getPublicUrl(key);
+            uploadedUrl = pub?.publicUrl ?? null;
+          }
         }
 
-        // 2) 비밀번호 해시 (plain text 저장 금지!)
+        // 2) 비밀번호 해시
         const passwordHash = await bcrypt.hash(this.password, 10);
 
-        // 3) users 테이블 insert
+        // 3) DB insert
         const { error: insErr } = await supabase.from("users").insert({
           name: this.name.trim(),
           bio: this.bio.trim() || null,
           photo_url: uploadedUrl,
           password_hash: passwordHash,
         });
-        if (insErr) throw insErr;
 
-        // 4) 완료 처리
+        if (insErr) {
+          console.error("Insert error:", insErr);
+          throw insErr;
+        }
+
         this.message = "가입 완료! 환영합니다 🙌";
         this.password = "";
         // 필요 시 폼 초기화
