@@ -95,7 +95,7 @@ export default {
         }));
 
         // ✅ 페이지 이동 (예시)
-        this.$router.push("/question-ready");
+        this.$router.push("/mypage");
       } catch (e) {
         console.error("Login error:", e);
         this.message = "로그인 중 오류가 발생했습니다.";
