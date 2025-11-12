@@ -3,13 +3,13 @@
     <h2 class="title">로그인</h2>
 
     <form class="form" @submit.prevent="login">
-      <label class="label" for="id">아이디</label>
+      <label class="label" for="id">아이디 (이름)</label>
       <input
         id="id"
         v-model.trim="id"
         type="text"
         class="input"
-        placeholder="아이디를 입력하세요"
+        placeholder="가입 시 입력한 이름"
         autocomplete="username"
         required
       />
@@ -25,12 +25,12 @@
         required
       />
 
-      <button type="submit" class="btn-primary">로그인</button>
+      <button type="submit" class="btn-primary" :disabled="loading">
+        {{ loading ? "확인 중..." : "로그인" }}
+      </button>
     </form>
 
-    <!-- 하단: 회원가입(작게) -->
     <div class="login-cta">
-      <!-- 라우터 쓰면 <router-link to="/join" class="btn-link">회원가입</router-link> -->
       <a href="/join" class="btn-link">회원가입</a>
     </div>
 
@@ -39,28 +39,72 @@
 </template>
 
 <script>
+import { supabase } from "../supabaseClient";
+import bcrypt from "bcryptjs";
+
 export default {
   name: "Login",
   data() {
     return {
-      id: "",
+      id: "", // Join.vue의 name 필드와 동일
       password: "",
       message: "",
+      loading: false,
     };
   },
   methods: {
-    login() {
-      if (this.id === "admin" && this.password === "1234") {
-        this.message = "로그인 성공!";
-        alert(`환영합니다, ${this.id}님!`);
-        // this.$router.push("/home");
-      } else {
-        this.message = "아이디 또는 비밀번호가 잘못되었습니다.";
+    async login() {
+      this.message = "";
+      if (!this.id || !this.password) {
+        this.message = "이름과 비밀번호를 모두 입력해주세요.";
+        return;
+      }
+
+      this.loading = true;
+
+      try {
+        // 1️⃣ users 테이블에서 name 일치하는 사용자 조회
+        const { data: users, error: fetchErr } = await supabase
+          .from("users")
+          .select("id, name, password_hash")
+          .eq("name", this.id)
+          .limit(1)
+          .single();
+
+        if (fetchErr || !users) {
+          this.message = "존재하지 않는 사용자입니다.";
+          this.loading = false;
+          return;
+        }
+
+        // 2️⃣ bcrypt로 비밀번호 확인
+        const match = await bcrypt.compare(this.password, users.password_hash);
+        if (!match) {
+          this.message = "비밀번호가 일치하지 않습니다.";
+          this.loading = false;
+          return;
+        }
+
+        // 3️⃣ 로그인 성공
+        this.message = `${this.id}님, 환영합니다! 🎉`;
+
+        // ✅ 로그인 세션 로컬스토리지 저장
+        localStorage.setItem("loginUser", JSON.stringify({
+          id: users.id,
+          name: users.name,
+        }));
+
+        // ✅ 페이지 이동 (예시)
+        this.$router.push("/question-ready");
+      } catch (e) {
+        console.error("Login error:", e);
+        this.message = "로그인 중 오류가 발생했습니다.";
+      } finally {
+        this.loading = false;
       }
     },
   },
 };
 </script>
 
-<!-- 분리된 CSS 파일 -->
-<style src="./Login.css"></style>
+<style src="./Login.css" scoped></style>
