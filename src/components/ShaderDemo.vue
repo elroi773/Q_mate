@@ -40,22 +40,10 @@
 </template>
 
 <script>
-// Import p5.js
-import p5 from 'p5'
-import { useRouter } from 'vue-router';
-
-const router = useRouter()
-
-// function goToPlay(){
-//   router.push('/question-ready')
-// }
-
-// function goToLogin(){
-//   router.push('/login')
-// }
+import p5 from "p5";
 
 export default {
-  name: 'ShaderDemo',
+  name: "ShaderDemo",
   data() {
     return {
       p5Instance: null,
@@ -65,68 +53,47 @@ export default {
       mouseY: 0,
       colors: ["#EF634D", "#FFD66D", "#EC3E73", "#0088FF"],
       backgroundColor: "#ffffff",
-      shader: null
-    }
+      shader: null,
+    };
   },
   mounted() {
-    this.initCursor()
-    this.initP5()
+    this.initCursor();
+    this.initP5();
   },
   beforeUnmount() {
-    if (this.p5Instance) {
-      this.p5Instance.remove()
-    }
-    this.removeEventListeners()
+    if (this.p5Instance) this.p5Instance.remove();
+    this.removeEventListeners();
   },
   methods: {
     initCursor() {
-      document.addEventListener('mousemove', this.handleMouseMove)
-      this.animateCursor()
+      document.addEventListener("mousemove", this.handleMouseMove);
+      this.animateCursor();
     },
-
     handleMouseMove(e) {
-      this.mouseX = e.clientX
-      this.mouseY = e.clientY
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
     },
-
     animateCursor() {
-      const speed = 0.2
-      this.cursorX += (this.mouseX - this.cursorX) * speed
-      this.cursorY += (this.mouseY - this.cursorY) * speed
-
-      requestAnimationFrame(this.animateCursor)
+      const speed = 0.2;
+      this.cursorX += (this.mouseX - this.cursorX) * speed;
+      this.cursorY += (this.mouseY - this.cursorY) * speed;
+      requestAnimationFrame(this.animateCursor);
     },
-
-    onLinkHover() {
-      const cursor = this.$refs.cursor
-      cursor.style.transform = 'translate(-50%, -50%) scale(1.5)'
-      cursor.style.background = 'rgba(172, 83, 207, 0.8)'
-      cursor.style.borderColor = 'rgba(172, 83, 207, 0.5)'
-    },
-
-    onLinkLeave() {
-      const cursor = this.$refs.cursor
-      cursor.style.transform = 'translate(-50%, -50%) scale(1)'
-      cursor.style.background = 'rgba(255, 255, 255, 0.8)'
-      cursor.style.borderColor = 'rgba(255, 255, 255, 0.5)'
-    },
-
     removeEventListeners() {
-      document.removeEventListener('mousemove', this.handleMouseMove)
+      document.removeEventListener("mousemove", this.handleMouseMove);
     },
-
     hex2rgb(hex) {
-      const r = parseInt(hex.slice(1, 3), 16)
-      const g = parseInt(hex.slice(3, 5), 16)
-      const b = parseInt(hex.slice(5, 7), 16)
-      return [r / 255, g / 255, b / 255]
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return [r / 255, g / 255, b / 255];
     },
-
-    goToPlay(){
-      this.$router.push('/question-ready')
+    // ✅ router 접근을 this.$router 로 변경
+    goToPlay() {
+      this.$router.push("/question-ready");
     },
-    goToLogin(){
-      this.$router.push('/login')
+    goToLogin() {
+      this.$router.push("/login");
     },
     initP5() {
       const sketch = (p) => {
