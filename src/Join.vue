@@ -203,4 +203,4 @@ export default {
 </script>
 
 <!-- 분리된 CSS 파일을 불러오기 -->
-<style src="./Join.css"></style>
+<style src="./Join.css" scoped></style>
