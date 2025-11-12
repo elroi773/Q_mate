@@ -22,7 +22,7 @@ body {
   max-width: 520px;
   margin: 48px auto;
   padding: 28px;
-  background: linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0b1324 100%);
+  /* background: linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0b1324 100%); */
   border: 1px solid var(--border);
   border-radius: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -32,6 +32,7 @@ body {
 }
 
 .title {
+  /* color: white; */
   margin: 0 0 16px;
   font-size: 24px;
   font-weight: 700;
