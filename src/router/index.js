@@ -7,7 +7,8 @@ import QuestionReady from '../Question_ready.vue'
 import Login from '../Login.vue'
 import Interview from '../Interview.vue'
 import Result from '../Result.vue'
-import Join from '../Join.vue' // 경로는 그대로, 라우트 path는 보통 소문자 추천
+import Join from '../Join.vue' 
+import MyPage from '../MyPage.vue'
 
 const routes = [
   { path: '/', name: 'home', component: ShaderDemo },            // 기본 진입점
@@ -16,6 +17,7 @@ const routes = [
   { path: '/join', name: 'join', component: Join },              // '/Join' → '/join' 권장
   { path: '/interview', name: 'interview', component: Interview },
   { path: '/result', name: 'result', component: Result },
+  { path: '/mypage', name: 'result', component: MyPage},
 
   // 404
   { path: '/:pathMatch(.*)*', name: 'not-found', component: ShaderDemo },
