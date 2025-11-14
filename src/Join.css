@@ -76,6 +76,7 @@ body {
 
 /* 타이틀 (로그인과 동일 스타일) */
 .title {
+  color: white;
   margin: 0 0 6px;
   font-size: 24px;
   font-weight: 700;
