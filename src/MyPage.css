@@ -1,0 +1,377 @@
+/* src/pages/MyPage.css */
+
+.mypage-root {
+    min-height: 100vh;
+    background: #f5f5f7;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px 60px;
+    box-sizing: border-box;
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+      sans-serif;
+  }
+  
+  .mypage-shell {
+    width: 100%;
+    max-width: 1180px;
+  }
+  
+  /* ===== 상단 카드 ===== */
+  
+  .mypage-header-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 32px 32px 28px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+  
+  /* 로딩 스켈레톤 */
+  .mypage-skeleton {
+    display: flex;
+    width: 100%;
+    gap: 32px;
+  }
+  
+  .skeleton-avatar {
+    width: 180px;
+    height: 220px;
+    border-radius: 24px;
+    background: linear-gradient(120deg, #f2f2f7, #e5e7eb, #f2f2f7);
+    background-size: 200% 200%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  
+  .skeleton-text-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 12px;
+  }
+  
+  .skeleton-line {
+    height: 16px;
+    border-radius: 999px;
+    background: linear-gradient(120deg, #f2f2f7, #e5e7eb, #f2f2f7);
+    background-size: 200% 200%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  
+  .skeleton-line.short {
+    width: 120px;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: -200% 50%;
+    }
+  }
+  
+  /* 에러/빈 상태 */
+  .mypage-error,
+  .mypage-empty {
+    width: 100%;
+    text-align: center;
+    padding: 40px 0;
+    color: #4b5563;
+    font-size: 15px;
+  }
+  
+  .mypage-empty span {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+  
+  /* 실제 프로필 */
+  
+  .mypage-profile {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+  }
+  
+  .mypage-avatar-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+  
+  .mypage-avatar {
+    width: 190px;
+    height: 230px;
+    object-fit: cover;
+    border-radius: 26px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.2);
+    border: 6px solid #f5f5f7;
+    background: #f3f4f6;
+  }
+  
+  .mypage-avatar-placeholder {
+    width: 190px;
+    height: 230px;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 0% 0%, #22c1c3, #4f46e5);
+    color: #ffffff;
+    font-size: 64px;
+    font-weight: 700;
+  }
+  
+  /* 오른쪽 정보 부분 */
+  
+  .mypage-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 8px;
+  }
+  
+  /* 목적 */
+  
+  .mypage-goal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  
+  .mypage-goal-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #111827;
+  }
+  
+  .mypage-goal-pill {
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+  }
+  
+  /* 이름 + 태그 */
+  
+  .mypage-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  
+  .mypage-name {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #111827;
+  }
+  
+  .mypage-name-tag {
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3f4ff;
+    color: #4f46e5;
+    font-weight: 500;
+  }
+  
+  /* 한 줄 자기소개 */
+  
+  .mypage-intro-block {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .mypage-intro-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .mypage-intro-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+  
+  /* ===== 기록 영역 ===== */
+  
+  .mypage-records-section {
+    margin-top: 32px;
+  }
+  
+  .mypage-section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  
+  .mypage-section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+  
+  .mypage-section-sub {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+  
+  /* 카드 그리드 */
+  
+  .mypage-record-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  
+  .mypage-record-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 20px 22px;
+    box-shadow: 0 14px 32px rgba(148, 163, 184, 0.25);
+    position: relative;
+    overflow: hidden;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.18s ease-out, box-shadow 0.18s ease-out,
+      translate 0.18s ease-out;
+  }
+  
+  .mypage-record-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 0 0, rgba(79, 70, 229, 0.06), transparent),
+      radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    pointer-events: none;
+  }
+  
+  .mypage-record-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px rgba(148, 163, 184, 0.32);
+  }
+  
+  .mypage-record-card:hover::before {
+    opacity: 1;
+  }
+  
+  /* 빈 카드 스타일 */
+  
+  .mypage-record-card.empty {
+    justify-content: center;
+  }
+  
+  .empty-label {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  
+  .empty-text {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+  
+  .mypage-record-card.placeholder {
+    background: #f3f4f6;
+    box-shadow: none;
+  }
+  
+  /* 실제 기록 카드 안쪽 */
+  
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .record-badge {
+    font-size: 11px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-weight: 600;
+  }
+  
+  .record-date {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+  
+  .record-title {
+    margin: 4px 0 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .record-score {
+    font-size: 13px;
+    color: #4b5563;
+  }
+  
+  .record-score span {
+    font-weight: 700;
+    color: #2563eb;
+  }
+  
+  .record-desc {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 4px 0 0;
+  }
+  
+  /* ===== 반응형 ===== */
+  
+  @media (max-width: 900px) {
+    .mypage-header-card {
+      padding: 24px 20px 22px;
+    }
+  
+    .mypage-profile {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .mypage-avatar-wrap {
+      justify-content: center;
+    }
+  
+    .mypage-info {
+      align-items: center;
+    }
+  
+    .mypage-name-row {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .mypage-record-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
