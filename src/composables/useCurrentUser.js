@@ -6,6 +6,7 @@ const currentUser = ref(null)
 // 로그인 후에 호출해서 현재 유저를 저장
 export function setCurrentUser(user) {
   currentUser.value = user
+  console.log('[useCurrentUser] setCurrentUser:', user)
   try {
     localStorage.setItem('currentUser', JSON.stringify(user))
   } catch (e) {
@@ -20,6 +21,7 @@ function loadFromStorageOnce() {
     const raw = localStorage.getItem('currentUser')
     if (raw) {
       currentUser.value = JSON.parse(raw)
+      console.log('[useCurrentUser] localStorage에서 currentUser 복원:', currentUser.value)
     }
   } catch (e) {
     console.error('currentUser 로드 실패:', e)
