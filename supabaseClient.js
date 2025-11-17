@@ -1,42 +1,51 @@
-// src/supabase.js
+// src/supabaseClient.js
 import { createClient } from '@supabase/supabase-js'
 
-// 1) 클라이언트 생성 (프로젝트 전체에서 공용으로 사용)
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
-// 2) 로그인 유저 가져오기
-export async function getCurrentUser() {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
-
-  if (error) throw error
-  return user
+// ✅ 1) localStorage에서 로그인 유저 가져오기 (동기 함수)
+export function getLocalLoginUser() {
+  try {
+    const raw = localStorage.getItem('loginUser')
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // 최소한 id는 있어야 "로그인된 유저"로 인정
+    if (!parsed.id) return null
+    return parsed       // { id, name }
+  } catch (e) {
+    console.error('getLocalLoginUser parse error:', e)
+    return null
+  }
 }
 
-// 3) 면접 폼 + 질문 저장 함수
+// ✅ 2) 기존 getCurrentUser 인터페이스 유지 (async)
+export async function getCurrentUser() {
+  // 나중에 Supabase Auth를 섞어 쓸 거면 여기서 조건 분기하면 됨
+  return getLocalLoginUser()
+}
+
+// ✅ 3) 면접 폼 + 질문 저장 (users 테이블 기준 user_id 사용)
 export async function saveInterviewFormToSupabase({ position, photo, questions }) {
-  // 1) 로그인 유저 가져오기
   const user = await getCurrentUser()
+
   if (!user) {
-    throw new Error('로그인 정보가 없습니다. (user가 null)')
+    throw new Error('로그인이 필요한 기능입니다.')
   }
 
-  // 2) interview_forms에 한 건 insert
+  // ⛔️ 여기 user.id는 이제 auth.users(id)가 아니라, public.users(id)
   const { data: formRows, error: formError } = await supabase
     .from('interview_forms')
     .insert([
       {
-        user_id: user.id,   // ✅ 로그인한 유저의 id
-        position,           // '취업' 등
-        photo,              // base64 문자열 or 스토리지 경로
+        user_id: user.id,  // ← users 테이블의 PK
+        position,
+        photo,
       },
     ])
-    .select('id')           // insert 후 id 받고 싶음
+    .select('id')
 
   if (formError) throw formError
 
@@ -45,10 +54,9 @@ export async function saveInterviewFormToSupabase({ position, photo, questions }
 
   const formId = form.id
 
-  // 3) questions 배열을 DB형태로 변환
   const questionPayload = questions.map((q, idx) => ({
     form_id: formId,
-    order_no: q.id ?? idx + 1,  // 화면에서 쓰던 question.id
+    order_no: q.id ?? idx + 1,
     title: q.title || '',
     content: q.content || '',
   }))
