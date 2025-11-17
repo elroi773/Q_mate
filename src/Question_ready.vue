@@ -113,12 +113,11 @@
       </div>
     </div>
   </div>
-</template>
-<script setup>
+</template><script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { saveInterviewFormToSupabase, getCurrentUser } from '../supabaseClient'
+import { supabase, saveInterviewFormToSupabase, getCurrentUser } from '../supabaseClient'
 import './Question_ready.css'
 
 const router = useRouter()
@@ -147,14 +146,32 @@ onMounted(async () => {
 
   if (!user) {
     console.warn('[QuestionReady] 로그인 유저 없음 → 세션 없음')
-    // 여기서 바로 로그인 페이지로 보낼지, alert만 띄울지는 취향
     alert('로그인 정보가 없습니다. 다시 로그인 후 이용해 주세요.')
-    // router.push('/login')
     return
   }
 
   currentUserId.value = user.id
   console.log('🟢 [QuestionReady] 로그인된 유저 ID:', currentUserId.value)
+
+  // 🔽 DB에서 photo_url 가져오기
+  try {
+    const { data, error } = await supabase
+      .from('users')                 // ✅ from
+      .select('photo_url')
+      .eq('id', currentUserId.value) // ✅ currentUserId
+      .single()
+
+    if (error) {
+      console.error('[QuestionReady] 지정한 사진이 없습니다:', error)
+    } else if (data?.photo_url) {
+      photo.value = data.photo_url
+      console.log('🖼 [QuestionReady] DB에 저장된 photo_url 사용:', photo.value)
+    } else {
+      console.log('[QuestionReady] photo_url 없음 → 기본 업로드 영역 노출')
+    }
+  } catch (e) {
+    console.error('[QuestionReady] 프로필 사진 조회 중 예외 발생:', e)
+  }
 })
 
 // 사진 업로드
