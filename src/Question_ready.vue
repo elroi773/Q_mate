@@ -159,6 +159,7 @@
 import { ref, onMounted /*, watch*/ } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { saveInterviewFormToSupabase } from '../supabaseClient.js'
 import './Question_ready.css'
 
 const STORAGE_KEY = 'interviewForm'
@@ -255,8 +256,25 @@ function scroll(direction) {
 }
 
 // 다음 단계로 이동 (저장 후 라우팅)
-function goNext() {
+async function goNext() {
+  // 1) 기존처럼 로컬스토리지에 저장
   saveToLocalStorage()
+
+  // 2) Supabase에 저장
+  try {
+    const formId = await saveInterviewFormToSupabase({
+      position: position.value,
+      photo: photo.value,
+      questions: questions.value,
+    })
+    console.log('Supabase에 저장된 form id:', formId)
+  } catch (err) {
+    console.error('면접 폼 저장 실패:', err)
+    // 필요하면 alert나 토스트로 사용자에게 알림
+    // alert('면접 폼 저장 중 오류가 발생했습니다.')
+  }
+
+  // 3) 인터뷰 화면으로 이동
   router.push('/interview')
 }
 </script>
