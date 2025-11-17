@@ -17,7 +17,7 @@ const routes = [
   { path: '/join', name: 'join', component: Join },              // '/Join' → '/join' 권장
   { path: '/interview', name: 'interview', component: Interview },
   { path: '/result', name: 'result', component: Result },
-  { path: '/mypage', name: 'result', component: MyPage},
+  { path: '/mypage', name: 'mypage', component: MyPage},
 
   // 404
   { path: '/:pathMatch(.*)*', name: 'not-found', component: ShaderDemo },
