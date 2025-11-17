@@ -33,23 +33,20 @@ export async function saveInterviewFormToSupabase({
   photo,
   questions,
 }) {
-  // 1) 현재 로그인한 유저 확인
   const {
     data: { user },
     error: userError,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(); // <- 여기서 AuthSessionMissingError 발생
 
   if (userError) throw userError;
   if (!user) throw new Error("로그인된 사용자가 없습니다.");
 
-  // 2) DB에 insert
   const { data, error } = await supabase
     .from("interview_forms")
     .insert({
       user_id: user.id,
       position,
       photo,
-      // JSON 컬럼(예: questions JSONB) 으로 저장하는 경우
       questions,
     })
     .select("id")
@@ -58,4 +55,3 @@ export async function saveInterviewFormToSupabase({
   if (error) throw error;
   return data.id;
 }
-    
