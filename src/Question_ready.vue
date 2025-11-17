@@ -156,13 +156,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted /*, watch*/ } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { saveInterviewFormToSupabase } from '../supabaseClient.js'
 import './Question_ready.css'
 
-const STORAGE_KEY = 'interviewForm'
+// ⭐ 로컬스토리지 키/함수/복원 기능 전부 삭제함
 
 const router = useRouter()
 const position = ref('취업')
@@ -172,50 +172,6 @@ const questions = ref([{ id: 1, title: '', content: '' }])
 const scrollContainerRef = ref(null)
 const photoInputRef = ref(null)
 const positions = ['취업', '동아리', '알바', '입시', '기타']
-
-// 초기 로드 시 저장된 값 복원
-onMounted(() => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return
-    const parsed = JSON.parse(raw)
-
-    if (parsed?.position) position.value = parsed.position
-    if (Array.isArray(parsed?.questions) && parsed.questions.length > 0) {
-      // id/title/content만 안전하게 매핑
-      questions.value = parsed.questions.map((q, idx) => ({
-        id: typeof q.id === 'number' ? q.id : idx + 1,
-        title: q.title ?? '',
-        content: q.content ?? ''
-      }))
-    }
-    if (typeof parsed?.photo === 'string') photo.value = parsed.photo
-  } catch (e) {
-    console.error('저장 데이터 로드 실패:', e)
-  }
-})
-
-// (옵션) 입력 중 자동 저장 원하시면 주석 해제
-// watch([position, photo, questions], saveToLocalStorage, { deep: true })
-
-function saveToLocalStorage() {
-  const payload = {
-    position: position.value,
-    photo: photo.value, // dataURL (용량 큼 주의)
-    questions: questions.value.map(q => ({
-      id: q.id,
-      title: q.title,
-      content: q.content
-    })),
-    savedAt: new Date().toISOString()
-  }
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-    // console.log('로컬 스토리지 저장 완료')
-  } catch (error) {
-    console.error('로컬 스토리지 저장 중 오류:', error)
-  }
-}
 
 // 사진 업로드
 function handlePhotoChange(e) {
@@ -255,12 +211,8 @@ function scroll(direction) {
   })
 }
 
-// 다음 단계로 이동 (저장 후 라우팅)
+// ✅ 다음 단계로 이동 (Supabase에만 저장 후 라우팅)
 async function goNext() {
-  // 1) 기존처럼 로컬스토리지에 저장
-  saveToLocalStorage()
-
-  // 2) Supabase에 저장
   try {
     const formId = await saveInterviewFormToSupabase({
       position: position.value,
@@ -268,13 +220,12 @@ async function goNext() {
       questions: questions.value,
     })
     console.log('Supabase에 저장된 form id:', formId)
+
+    // 저장 성공 시에만 인터뷰 화면으로 이동
+    router.push('/interview')
   } catch (err) {
     console.error('면접 폼 저장 실패:', err)
-    // 필요하면 alert나 토스트로 사용자에게 알림
-    // alert('면접 폼 저장 중 오류가 발생했습니다.')
+    alert('면접 폼 저장 중 오류가 발생했습니다. 다시 시도해주세요.')
   }
-
-  // 3) 인터뷰 화면으로 이동
-  router.push('/interview')
 }
 </script>
