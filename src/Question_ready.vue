@@ -115,11 +115,10 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { saveInterviewFormToSupabase } from '../supabaseClient.js'
-import { useCurrentUser } from '../src/composables/useCurrentUser.js'  
+import { saveInterviewFormToSupabase, getCurrentUser } from '../supabaseClient'
 import './Question_ready.css'
 
 const router = useRouter()
@@ -136,25 +135,26 @@ const photoInputRef = ref(null)
 // 면접 상황 옵션
 const positions = ['취업', '동아리', '알바', '입시', '기타']
 
-// ✅ 현재 로그인 유저 ID (이걸로 Supabase에 저장할 것)
+// ✅ 이걸로 Supabase에 저장할 user_id 를 갖고 있을 거임
 const currentUserId = ref(null)
 
-// 🔗 MyPage에서 쓰던 전역 유저 상태 재사용
-const { currentUser, status } = useCurrentUser()
-
-// 마운트 시점에 현재 유저 상태 한번 찍어보기
-onMounted(() => {
+// 🔍 MyPage랑 똑같이 getCurrentUser()로 로그인 유저 확인
+onMounted(async () => {
   console.log('===== 🔍 QuestionReady.vue Mounted =====')
-  console.log('[QuestionReady] useCurrentUser status:', status?.value)
-  console.log('[QuestionReady] useCurrentUser currentUser:', currentUser?.value)
-})
 
-// currentUser가 채워지면 자동으로 user_id 세팅
-watchEffect(() => {
-  if (currentUser?.value && currentUser.value.id) {
-    currentUserId.value = currentUser.value.id
-    console.log('🟢 [QuestionReady] useCurrentUser에서 가져온 로그인 유저 ID:', currentUserId.value)
+  const user = await getCurrentUser()
+  console.log('[QuestionReady] getCurrentUser:', user)
+
+  if (!user) {
+    console.warn('[QuestionReady] 로그인 유저 없음 → 세션 없음')
+    // 여기서 바로 로그인 페이지로 보낼지, alert만 띄울지는 취향
+    alert('로그인 정보가 없습니다. 다시 로그인 후 이용해 주세요.')
+    // router.push('/login')
+    return
   }
+
+  currentUserId.value = user.id
+  console.log('🟢 [QuestionReady] 로그인된 유저 ID:', currentUserId.value)
 })
 
 // 사진 업로드
@@ -201,7 +201,7 @@ async function goNext() {
 
   if (!currentUserId.value) {
     alert('로그인 정보를 찾을 수 없습니다. 다시 로그인 후 시도해주세요.')
-    console.warn('[QuestionReady] currentUserId 없음 — useCurrentUser에서 아직 안 넘어온 상태일 수도 있음')
+    console.warn('[QuestionReady] currentUserId 없음 — getCurrentUser()에서 유저를 못받은 상태')
     return
   }
 
