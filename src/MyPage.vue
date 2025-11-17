@@ -107,49 +107,55 @@
     </div>
   </div>
 </template>
-
-
 <script setup>
 import { ref, onMounted } from "vue";
-import { supabase } from "../supabaseClient";
 import { useRouter } from "vue-router";
+import { supabase, getCurrentUser } from "../supabaseClient";
+
 const profile = ref(null);
 const status = ref("loading"); // loading | ready | empty | error
-
 const records = ref([]);
 const router = useRouter();
+
+// 면접 연습 페이지로 이동
 const goInterview = () => {
+  // 상태가 ready가 아니면 일단 막긴 막되, 로그인 페이지로는 안 튕기고 경고만
+  if (status.value !== "ready" || !profile.value) {
+    alert("프로필 정보를 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.");
+    return;
+  }
+
   router.push("/question-ready");
-}
+};
 
 onMounted(async () => {
   try {
-    // 1) 로그인된 유저
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    status.value = "loading";
 
-    if (userError) throw userError;
+    // ✅ 1) 로그인된 유저 확인 (세션 없으면 null 리턴)
+    const user = await getCurrentUser();
+    console.log("🔎 [MyPage] current user:", user);
+
     if (!user) {
+      // 로그인 세션이 진짜 없는 상태
       status.value = "empty";
+      // ❌ 일단 자동으로 /login 보내지 말고, 화면에 "로그인 후 다시 접속"만 표시
       return;
     }
 
-    // 2) users 테이블에서 프로필 정보 조회
-    //    테이블명/컬럼명은 실제 DB에 맞게 수정
+    // ✅ 2) users 테이블에서 프로필 정보 조회
     const { data, error } = await supabase
-      .from("users") // 👈 users 테이블
-      .select("name, avatar_url, intro, goal")
+      .from("users")
+      .select("name, bio, photo_url, goal")
       .eq("id", user.id)
       .single();
 
     if (error) throw error;
 
     profile.value = {
-      name: data?.name || user.email,
-      avatarUrl: data?.avatar_url,
-      intro: data?.intro || "",
+      name: data?.name || loginUser.name,
+      avatarUrl: data?.photo_url || null,  // 없으면 기본 아바타 보여줌
+      intro: data?.bio || "",               // 한 줄 자기소개
       goal: data?.goal || "취업",
     };
 
@@ -160,5 +166,7 @@ onMounted(async () => {
   }
 });
 </script>
+
+
 
 <style scoped src="./MyPage.css"></style>
