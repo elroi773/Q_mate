@@ -29,8 +29,12 @@
         <div v-else-if="status === 'ready' && profile" class="mypage-profile">
           <!-- 왼쪽 프로필 사진 -->
           <div class="mypage-avatar-wrap">
-            <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="`${profile.name} 증명사진`"
-              class="mypage-avatar" />
+            <img
+              v-if="profile.avatarUrl"
+              :src="profile.avatarUrl"
+              :alt="`${profile.name} 증명사진`"
+              class="mypage-avatar"
+            />
             <div v-else class="mypage-avatar-placeholder">
               <span>{{ profile.name?.[0] || "U" }}</span>
             </div>
@@ -71,7 +75,7 @@
             </span>
           </div>
 
-          <!-- ⭐ 여기 버튼 추가 -->
+          <!-- 면접 연습하러 가기 -->
           <button class="mypage-cta-btn" @click="goInterview">
             면접 연습하러가기
           </button>
@@ -91,7 +95,11 @@
           </template>
 
           <!-- 기록 있을 때 -->
-          <article v-for="item in records" :key="item.id" class="mypage-record-card">
+          <article
+            v-for="item in records"
+            :key="item.id"
+            class="mypage-record-card"
+          >
             <div class="record-header">
               <span class="record-badge">{{ item.type || "면접" }}</span>
               <span class="record-date">{{ item.date }}</span>
@@ -107,6 +115,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -119,31 +128,75 @@ const router = useRouter();
 
 // 면접 연습 페이지로 이동
 const goInterview = () => {
-  // 상태가 ready가 아니면 일단 막긴 막되, 로그인 페이지로는 안 튕기고 경고만
   if (status.value !== "ready" || !profile.value) {
     alert("프로필 정보를 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.");
     return;
   }
-
   router.push("/question-ready");
 };
+
+// 날짜 표시용 포맷터
+function formatDate(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  return d.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+// 인터뷰 결과 불러오기
+async function loadInterviewResults(userId) {
+  const { data, error } = await supabase
+    .from("interview_results")
+    .select("id, position, score, intro, feedback_title, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[MyPage] interview_results load error:", error);
+    return;
+  }
+
+  // DB → 화면에 맞는 형태로 매핑
+  records.value = (data || []).map((row) => {
+    const title =
+      (row.position ? `${row.position} 모의 면접` : "모의 면접 결과");
+    const baseMemo =
+      row.feedback_title ||
+      (row.intro ? row.intro.trim() : "") ||
+      "작성된 피드백이 없습니다.";
+
+    // 너무 길면 살짝 잘라서 ...
+    const memo =
+      baseMemo.length > 80 ? baseMemo.slice(0, 80) + "..." : baseMemo;
+
+    return {
+      id: row.id,
+      type: "모의 면접",
+      date: formatDate(row.created_at),
+      title,
+      score: row.score,
+      memo,
+    };
+  });
+}
 
 onMounted(async () => {
   try {
     status.value = "loading";
 
-    // ✅ 1) 로그인된 유저 확인 (세션 없으면 null 리턴)
+    // 1) 로그인된 유저 확인
     const user = await getCurrentUser();
     console.log("🔎 [MyPage] current user:", user);
 
     if (!user) {
-      // 로그인 세션이 진짜 없는 상태
       status.value = "empty";
-      // ❌ 일단 자동으로 /login 보내지 말고, 화면에 "로그인 후 다시 접속"만 표시
       return;
     }
 
-    // ✅ 2) users 테이블에서 프로필 정보 조회
+    // 2) users 테이블에서 프로필 정보 조회
     const { data, error } = await supabase
       .from("users")
       .select("name, bio, photo_url, goal")
@@ -153,11 +206,14 @@ onMounted(async () => {
     if (error) throw error;
 
     profile.value = {
-      name: data?.name || loginUser.name,
-      avatarUrl: data?.photo_url || null,  // 없으면 기본 아바타 보여줌
-      intro: data?.bio || "",               // 한 줄 자기소개
+      name: data?.name || user.name || "사용자",
+      avatarUrl: data?.photo_url || null,
+      intro: data?.bio || "",
       goal: data?.goal || "취업",
     };
+
+    // 3) 인터뷰 결과 목록 조회
+    await loadInterviewResults(user.id);
 
     status.value = "ready";
   } catch (err) {
@@ -166,7 +222,5 @@ onMounted(async () => {
   }
 });
 </script>
-
-
 
 <style scoped src="./MyPage.css"></style>
