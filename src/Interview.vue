@@ -1,7 +1,5 @@
 <template>
   <div class="interview-container">
-
-
     <div class="interview-page">
       <!-- Header strip -->
       <header class="topbar">
@@ -39,12 +37,29 @@
             <span class="win-dot" />
             <span class="win-dot" />
           </div>
+
           <div class="panel-body cam-body">
+            <!-- ✅ 실제 카메라 스트림 -->
             <div v-if="cameraOn" class="cam-stream">
-              <!-- 실제 카메라 연결은 추후 MediaDevices로 구현 -->
-              <div class="fake-stream">내 카메라 미리보기</div>
+              <video
+                ref="videoRef"
+                autoplay
+                playsinline
+                class="cam-video"
+              ></video>
+
+              <button type="button" class="cam-cta small" @click="stopCamera">
+                카메라 끄기
+              </button>
             </div>
-            <button v-else class="cam-cta" @click="$emit('start-camera')">
+
+            <!-- 아직 카메라 안 켰을 때 CTA -->
+            <button
+              v-else
+              type="button"
+              class="cam-cta"
+              @click="startCamera"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="44" height="44">
                 <path
                   d="M20 5h-3.17L15 3H9L7.17 5H4c-1.1 0-2 .9-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7c0-1.1-.9-2-2-2zm0 14H4V7h4.05l1.83-2h4.24l1.83 2H20v12z" />
@@ -91,7 +106,7 @@
           </svg>
         </button>
 
-        <button class="refresh" @click="$emit('refresh-question')">
+        <button class="refresh" @click="emit('refresh-question')">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
             <path
               d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.54l-1.42 1.42A7 7 0 0 0 19 13c0-3.87-3.13-7-7-7z" />
@@ -104,38 +119,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, onBeforeUnmount } from 'vue'
 import InterviewerImg from './img/Interview.png'
 
-
-// ✅ props: 백엔드에서 내려줄 값들만 유지
+// ✅ props
 const props = defineProps<{
   questionText?: string
   loading?: boolean
+  // 기존 cameraOn prop은 "초기값" 정도로만 사용
   cameraOn?: boolean
 }>()
 
-// ✅ 면접관 이미지는 내부 import 사용
-const interviewerImageSrc = InterviewerImg
-
-// Local UI states
-const micOn = ref(false)
-
-// mirror prop to local computed for simple truthy checks
-const cameraOn = ref(!!props.cameraOn)
-watchEffect(() => (cameraOn.value = !!props.cameraOn))
-
+// ✅ emit 정의
 const emit = defineEmits<{
   (e: 'toggle-mic', value: boolean): void
   (e: 'start-camera'): void
+  (e: 'stop-camera'): void
   (e: 'refresh-question'): void
 }>()
 
+// ✅ 면접관 이미지
+const interviewerImageSrc = InterviewerImg
+
+// ✅ 마이크 상태
+const micOn = ref(false)
+
+// ✅ 카메라 관련 상태
+const cameraOn = ref(!!props.cameraOn)
+watchEffect(() => {
+  // 부모에서 prop 바꾸면 따라가도록
+  cameraOn.value = !!props.cameraOn || cameraOn.value
+})
+
+// ✅ 실제 video 엘리먼트 & 스트림
+const videoRef = ref<HTMLVideoElement | null>(null)
+const stream = ref<MediaStream | null>(null)
+
+// 마이크 토글
 function toggleMic() {
   micOn.value = !micOn.value
   emit('toggle-mic', micOn.value)
 }
+
+// 카메라 시작
+async function startCamera() {
+  try {
+    // HTTPS 또는 localhost 에서만 동작 (브라우저 정책)
+    const mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false, // 음성은 마이크 로직이랑 별도로
+    })
+
+    stream.value = mediaStream
+    cameraOn.value = true
+
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream
+    }
+
+    emit('start-camera')
+  } catch (err) {
+    console.error('카메라를 켤 수 없습니다:', err)
+    alert('카메라 권한을 허용했는지, 브라우저/https 환경인지 확인해주세요.')
+  }
+}
+
+// 카메라 정지
+function stopCamera() {
+  if (stream.value) {
+    stream.value.getTracks().forEach((track) => track.stop())
+    stream.value = null
+  }
+  cameraOn.value = false
+  emit('stop-camera')
+}
+
+// 컴포넌트가 사라질 때 카메라 반드시 정지
+onBeforeUnmount(() => {
+  stopCamera()
+})
 </script>
 
-<!-- ✅ 외부 CSS 분리 -->
 <style src="./Interview.css" scoped></style>
