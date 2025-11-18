@@ -36,6 +36,19 @@ body {
   color: var(--text);
 }
 
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.18), transparent 55%),
+    radial-gradient(circle at 0% 100%, rgba(56, 189, 248, 0.12), transparent 55%),
+    linear-gradient(145deg, #020617 0%, #02081f 45%, #020617 100%);
+  color: var(--text);
+}
+
 /* 📌 Login.vue 의 .login-container */
 .login-container {
   width: 100%;
@@ -124,7 +137,7 @@ body {
   border-radius: 12px;
   border: 1px solid rgba(51, 65, 85, 0.9);
   background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.96), #020617);
-  color: var(--text);
+  color: white;
   outline: none;
   font-size: 14px;
   transition:
