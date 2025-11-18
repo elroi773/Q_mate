@@ -1,40 +1,43 @@
 <template>
-  <div class="login-container">
-    <h2 class="title">로그인</h2>
+  <!-- ⭐ 전체 화면을 채우는 래퍼 추가 -->
+  <div class="login-page">
+    <div class="login-container">
+      <h2 class="title">로그인</h2>
 
-    <form class="form" @submit.prevent="login">
-      <label class="label" for="id">아이디 (이름)</label>
-      <input
-        id="id"
-        v-model.trim="id"
-        type="text"
-        class="input"
-        placeholder="가입 시 입력한 이름"
-        autocomplete="username"
-        required
-      />
+      <form class="form" @submit.prevent="login">
+        <label class="label" for="id">아이디 (이름)</label>
+        <input
+          id="id"
+          v-model.trim="id"
+          type="text"
+          class="input"
+          placeholder="가입 시 입력한 이름"
+          autocomplete="username"
+          required
+        />
 
-      <label class="label" for="password">비밀번호</label>
-      <input
-        id="password"
-        v-model="password"
-        type="password"
-        class="input"
-        placeholder="비밀번호를 입력하세요"
-        autocomplete="current-password"
-        required
-      />
+        <label class="label" for="password">비밀번호</label>
+        <input
+          id="password"
+          v-model="password"
+          type="password"
+          class="input"
+          placeholder="비밀번호를 입력하세요"
+          autocomplete="current-password"
+          required
+        />
 
-      <button type="submit" class="btn-primary" :disabled="loading">
-        {{ loading ? "확인 중..." : "로그인" }}
-      </button>
-    </form>
+        <button type="submit" class="btn-primary" :disabled="loading">
+          {{ loading ? "확인 중..." : "로그인" }}
+        </button>
+      </form>
 
-    <div class="login-cta">
-      <a href="/join" class="btn-link">회원가입</a>
+      <div class="login-cta">
+        <a href="/join" class="btn-link">회원가입</a>
+      </div>
+
+      <p v-if="message" class="message">{{ message }}</p>
     </div>
-
-    <p v-if="message" class="message">{{ message }}</p>
   </div>
 </template>
 
