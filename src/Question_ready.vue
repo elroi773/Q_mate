@@ -238,7 +238,10 @@ async function goNext() {
     })
 
     console.log('[QuestionReady] Supabase에 저장된 form id:', formId)
-    router.push('/interview')
+    router.push({
+      path: '/interview',
+      query: { position: position.value } // 상황 쿼리로 전달
+    })
   } catch (err) {
     console.error('[QuestionReady] 면접 폼 저장 실패:', err)
     alert('면접 폼 저장 중 오류가 발생했습니다. 다시 시도해주세요.')

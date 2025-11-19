@@ -88,7 +88,7 @@
 
         <div class="question">
           <span class="label">AI 질문</span>
-          <div class="qtext">
+          <div :class="['qtext', loading ? 'loading' : (questionText.includes('오류') ? 'error' : 'normal')]">
             <template v-if="loading">
               <span class="skeleton" />
               <span class="skeleton" />
@@ -106,7 +106,7 @@
           </svg>
         </button>
 
-        <button class="refresh" @click="emit('refresh-question')">
+        <button class="refresh" @click="refreshQuestion">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
             <path
               d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.54l-1.42 1.42A7 7 0 0 0 19 13c0-3.87-3.13-7-7-7z" />
@@ -120,12 +120,15 @@
 
 <script setup lang="ts">
 import { ref, watchEffect, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import InterviewerImg from './img/Interview.png'
+import axios from 'axios'
+
+const route = useRoute()
+const position = ref(route.query.position || '일반')
 
 // ✅ props
 const props = defineProps<{
-  questionText?: string
-  loading?: boolean
   // 기존 cameraOn prop은 "초기값" 정도로만 사용
   cameraOn?: boolean
 }>()
@@ -198,6 +201,31 @@ function stopCamera() {
 onBeforeUnmount(() => {
   stopCamera()
 })
+
+// AI 질문 생성
+const questionText = ref('질문을 받아오는 중입니다...')
+const loading = ref(false)
+
+async function refreshQuestion() {
+  loading.value = true
+  questionText.value = '질문 생성 중…'
+
+  try {
+    const res = await axios.get('http://localhost:8000/api/interview-question', {
+      params: { position: position.value }, // 사용자가 선택한 상황 전달
+      withCredentials: true
+    })
+    questionText.value = res.data.question || '질문을 불러오지 못했습니다.'
+  } catch (err) {
+    console.error(err)
+    questionText.value = '질문을 불러오는 중 오류가 발생했습니다.'
+  } finally {
+    loading.value = false
+  }
+}
+
+// 초기 로딩 시 질문 한 번 가져오기
+refreshQuestion()
 </script>
 
 <style src="./Interview.css" scoped></style>

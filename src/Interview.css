@@ -225,6 +225,15 @@
   flex-wrap: wrap;
 }
 
+.qtext.normal {
+  color: #0f172a; /* 질문 정상일 때 검정 */
+}
+
+.qtext.loading,
+.qtext.error {
+  color: #888; /* 로딩/오류 시 회색 */
+}
+
 .skeleton {
   display: inline-block;
   height: 12px;
