@@ -118,7 +118,7 @@
 }
 
 .cam-stream {
-  position: relative; /* 자식 절대 위치 기준 */
+  position: relative;
   width: 100%;
   height: 100%;
 }
