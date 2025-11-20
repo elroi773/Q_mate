@@ -1,4 +1,5 @@
 # 실행 방법
+# & D:\Q_mate\.venv\Scripts\Activate.ps1
 # cd backend
 # uvicorn main:app --reload --port 8000
 

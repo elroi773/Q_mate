@@ -116,6 +116,33 @@
   background: #0f172a;
   color: #fff;
 }
+
+.cam-stream {
+  position: relative; /* 자식 절대 위치 기준 */
+  width: 100%;
+  height: 100%;
+}
+
+.cam-stream .cam-cta.small {
+  display: flex; /* flex 유지 */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 내용물 중앙 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 13px;
+  border-radius: 6px;
+  font-size: 14px;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  z-index: 10;
+  background: transparent;
+  color: #e5e7eb;
+}
+
 .cam-cta {
   color: #e5e7eb;
   background: transparent;
@@ -129,7 +156,8 @@
   cursor: pointer;
   transition: 0.2s ease;
 }
-.cam-cta:hover {
+.cam-cta:hover,
+.cam-cta.small:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 .cam-cta svg {
@@ -231,7 +259,7 @@
 
 .qtext.loading,
 .qtext.error {
-  color: #888; /* 로딩/오류 시 회색 */
+  color: var(--ink); /* 로딩/오류 시 회색 */
 }
 
 .skeleton {
@@ -256,10 +284,10 @@
 
 .mic {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 65px;
+  height: 65px;
   border: none;
-  border-radius: 50%;
+  border-radius: 10px !important;
   background: linear-gradient(
     180deg,
     var(--accent) 0%,
@@ -276,7 +304,7 @@
 .pulse {
   position: absolute;
   inset: -6px;
-  border-radius: 50%;
+  border-radius: 10px;
   border: 2px solid rgba(79, 187, 255, 0.35);
   opacity: 0;
   transition: 0.2s ease;
@@ -303,13 +331,13 @@
   background: #f1f5f9;
   color: #0f172a;
   border: none;
-  border-radius: 10px;
+  border-radius: 10px !important;
   padding: 10px 12px;
   font-weight: 600;
   cursor: pointer;
 }
 .refresh svg {
-  fill: #0f172a;
+  fill: #fff;
 }
 
 @media (max-width: 1024px) {
@@ -345,4 +373,59 @@
 
 .interview-container button:active {
   background-color: #334155;
+}
+
+/* ---- Next Button ---- */
+.next-wrap {
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  bottom: 18px;
+  right: 40px;
+}
+
+.next-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  min-width: 130px;
+  min-height: 45px;
+  border-radius: 9999px !important;
+  font-weight: 600;
+  color: #fff;
+  background-image: linear-gradient(
+    90deg,
+    var(--primary, #3b82f6),
+    var(--primary-600, #2563eb)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.28);
+  cursor: pointer;
+  appearance: none;
+}
+
+.next-btn:hover {
+  background-image: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.38);
+  transform: translateY(-1px);
+}
+
+.next-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.32);
+}
+
+.next-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring, 0 0 0 2px rgba(59, 130, 246, 0.35)),
+    0 10px 28px rgba(59, 130, 246, 0.28);
+}
+
+/* 모션 최소화 환경 대응 */
+@media (prefers-reduced-motion: reduce) {
+  .next-btn {
+    transition: none;
+  }
 }
