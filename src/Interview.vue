@@ -114,17 +114,22 @@
           새 질문
         </button>
       </footer>
+
+      <div class="next-wrap">
+        <button class="next-btn" @click="goNext">면접 종료하기 →</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watchEffect, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import InterviewerImg from './img/Interview.png'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
 const position = ref(route.query.position || '일반')
 
 // ✅ props
@@ -201,6 +206,12 @@ function stopCamera() {
 onBeforeUnmount(() => {
   stopCamera()
 })
+
+async function goNext() {
+  router.push({
+    path: '/result',
+  })
+}
 
 // AI 질문 생성
 const questionText = ref('질문을 받아오는 중입니다...')
