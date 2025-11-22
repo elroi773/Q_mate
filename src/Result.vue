@@ -60,7 +60,7 @@
 
     <!-- 하단: 이해를 돕는 이미지 + 설명 -->
     <section class="bottom">
-      <h3 class="sub-title">면접 AI 가 캐치한 내 태도</h3>
+      <h3 class="sub-title">면접 AI가 캐치한 내 태도</h3>
 
       <div class="gallery">
         <img :src="helperImg1" alt="예시 이미지 1" class="helper" />
@@ -84,17 +84,24 @@
         <span v-if="isSaving">저장 중...</span>
         <span v-else>결과 저장하기</span>
       </button>
-      <p class="save-hint">※ 저장된 결과는 향후 마이페이지(예정)에서 조회할 수 있어요.</p>
+      <p class="save-hint">※ 저장된 결과는 향후 마이페이지에서 조회할 수 있어요.</p>
     </section>
+
+    <div class="next-wrap">
+      <button class="next-btn" @click="goNext">나가기 →</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, nextTick } from 'vue'
 import { supabase, getCurrentUser } from '../supabaseClient'
+import { useRoute, useRouter } from 'vue-router'
 import './Result.css'
 
 const STORAGE_KEY = 'interviewForm'
+const router = useRouter()
+const route = useRoute()
 
 // ===== 화면 상태 =====
 const photo = ref(null)
@@ -105,9 +112,11 @@ const name = ref('')
 const isSaving = ref(false) // 저장 중 상태
 
 // ===== 게이지/숫자 애니메이션 =====
-const score = ref(50)
+const score = ref(route.query.avgScore !== undefined ? Number(route.query.avgScore) : 50)
 const animatedScore = ref(0)
 const duration = 1000
+
+alert(route.query.avgScore + " " + score.value)
 
 const size = 220
 const stroke = 12
@@ -268,6 +277,12 @@ onMounted(async () => {
 // 저장은 버튼에서만 실행 (자동 저장 X)
 const helperImg1 = ref('https://picsum.photos/seed/hand-talk/480/320')
 const helperImg2 = ref('https://picsum.photos/seed/hand-pose/480/320')
+
+async function goNext() {
+  router.push({
+    path: '/myPage',
+  })
+}
 </script>
 
 <style src="./Result.css" scoped></style>
