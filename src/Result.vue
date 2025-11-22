@@ -105,7 +105,7 @@ const route = useRoute()
 
 // ===== 화면 상태 =====
 const photo = ref(null)
-const position = ref('취업')
+const position = route.query.position || '취업'
 const intro = ref('안녕하세요! 저는 어제보다 더 나은 내일을 만드는 FE 개발자 입니다!')
 const name = ref('')
 
@@ -115,8 +115,6 @@ const isSaving = ref(false) // 저장 중 상태
 const score = ref(route.query.avgScore !== undefined ? Number(route.query.avgScore) : 50)
 const animatedScore = ref(0)
 const duration = 1000
-
-alert(route.query.avgScore + " " + score.value)
 
 const size = 220
 const stroke = 12
