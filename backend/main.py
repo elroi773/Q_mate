@@ -61,15 +61,22 @@ async def evaluate_answer(
     너는 면접관이야.
     질문: {question}
     지원자 답변: {answer_text}
-    답변이 질문을 얼마나 잘 이해하고 정확히 답했는지 0~100 점으로 숫자만 출력해줘.
-    점수는 최대한 후하게 잘 주었으면 좋겠어.
+    1) 답변이 질문을 얼마나 잘 이해하고 정확히 답했는지 0~100 점으로 숫자만 출력해줘. 점수는 최대한 후하게 잘 주었으면 좋겠어.
+    2) 답변 개선을 위한 간단한 조언이 있다면 한문장도 출력해줘.
+    반드시 아래 형식으로 출력해줘: 점수/조언 (예시: 85/조금 더 또박또박 말해보아요.)
     """
     response = model.generate_content(prompt)
+    
     try:
-        score = int(''.join(filter(str.isdigit, response.text)))
-    except:
+        score_str, advice = response.text.split("/", 1)  # '/' 기준으로 나누기
+        score = int(score_str.strip())  # 숫자만
+        advice = advice.strip()  # 조언
+    except Exception:
         score = 0
+        advice = ""
 
     print("AI가 판단한 점수:", score)
+    print("AI 조언:", advice)
 
-    return score
+    # score와 advice 둘 다 반환
+    return {"score": score, "advice": advice}

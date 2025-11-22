@@ -70,16 +70,21 @@
         </section>
 
         <!-- Tip card -->
-        <aside class="tip">
-          <div class="tip-head">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
-              <path
-                d="M9 21h6v-1H9v1zm3-20C6.48 1 2 5.48 2 11c0 3.53 1.84 6.62 4.6 8.4V21h10.8v-1.6C20.16 17.62 22 14.53 22 11 22 5.48 17.52 1 12 1zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-            </svg>
-            <span>TIP</span>
-          </div>
-          <p>말을 더듬지 않고, 또박또박 말해요!</p>
-        </aside>
+        <section class="tip-session">
+          <aside class="tip">
+            <div class="tip-head">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                <path
+                  d="M9 21h6v-1H9v1zm3-20C6.48 1 2 5.48 2 11c0 3.53 1.84 6.62 4.6 8.4V21h10.8v-1.6C20.16 17.62 22 14.53 22 11 22 5.48 17.52 1 12 1zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+              </svg>
+              <span>TIP</span>
+            </div>
+            <p>말을 더듬지 않고, 또박또박 말해요!</p>
+          </aside>
+
+          <!-- AI 조언 채팅 영역 -->
+          <div class="chat-advice" ref="chatAdviceContainer"></div>
+        </section>
       </main>
 
       <!-- Bottom: AI Question Bar -->
@@ -190,7 +195,7 @@ async function startRecording() {
     mediaRecorder.start()
     isRecording.value = true
 
-    // 60초 제한
+    // 답변 시간 60초 제한
     setTimeout(() => stopRecording(), 60000)
   } catch (err) {
     console.error('마이크를 켤 수 없습니다:', err)
@@ -220,6 +225,8 @@ const scores = ref<number[]>([])
 const questionCount = ref(0)
 const maxQuestions = 5
 
+const chatAdviceContainer = ref<HTMLElement | null>(null)
+
 async function sendToAI(blob: Blob) {
   if (!blob) return
   const formData = new FormData()
@@ -228,14 +235,26 @@ async function sendToAI(blob: Blob) {
 
   try {
     const res = await axios.post('http://localhost:8000/api/evaluate-answer', formData)
-    const newScore = res.data
+    const newScore = res.data.score
+    const advice = res.data.advice
+
     scores.value.push(newScore)
     questionCount.value++
+
+    // ✅ AI 조언 채팅처럼 쌓기
+    if (chatAdviceContainer.value && advice) {
+      const msg = document.createElement('div')
+      msg.className = 'advice-msg'
+      msg.textContent = advice
+      chatAdviceContainer.value.appendChild(msg)
+      // 스크롤 항상 맨 아래
+      chatAdviceContainer.value.scrollTop = chatAdviceContainer.value.scrollHeight
+    }
 
     if (questionCount.value >= maxQuestions) {
       // ✅ 질문 모두 끝나면 평균 계산 후 결과로 이동
       const avgScore = scores.value.reduce((a, b) => a + b, 0) / scores.value.length
-      router.push({ path: '/result', query: { avgScore: Math.round(avgScore) } })
+      router.push({ path: '/result', query: { avgScore: Math.round(avgScore), position: position.value } })
     } else {
       // ✅ 다음 질문 자동 요청
       refreshQuestion()
@@ -294,7 +313,10 @@ async function goNext() {
   // 결과 페이지로 이동하면서 쿼리로 전달
   router.push({
     path: '/result',
-    query: { avgScore }
+    query: {
+      avgScore: avgScore,
+      position: position.value
+    }
   })
 }
 
