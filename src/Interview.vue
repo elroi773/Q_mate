@@ -98,7 +98,7 @@
           </div>
         </div>
 
-        <button class="mic" @click="toggleMic" :aria-pressed="micOn">
+        <button class="mic" @click="handleMicClick" :aria-pressed="micOn">
           <div class="pulse" :class="{ active: micOn }" />
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
             <path
@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onBeforeUnmount } from 'vue'
+import { ref, watchEffect, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import InterviewerImg from './img/Interview.png'
 import axios from 'axios'
@@ -134,7 +134,6 @@ const position = ref(route.query.position || '일반')
 
 // ✅ props
 const props = defineProps<{
-  // 기존 cameraOn prop은 "초기값" 정도로만 사용
   cameraOn?: boolean
 }>()
 
@@ -155,7 +154,6 @@ const micOn = ref(false)
 // ✅ 카메라 관련 상태
 const cameraOn = ref(!!props.cameraOn)
 watchEffect(() => {
-  // 부모에서 prop 바꾸면 따라가도록
   cameraOn.value = !!props.cameraOn || cameraOn.value
 })
 
@@ -169,18 +167,97 @@ function toggleMic() {
   emit('toggle-mic', micOn.value)
 }
 
+// 오디오 관련 상태
+const isRecording = ref(false)
+const recordedBlob = ref<Blob | null>(null)
+
+let mediaRecorder: MediaRecorder | null = null
+
+async function startRecording() {
+  if (isRecording.value) return
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaRecorder = new MediaRecorder(stream)
+    const chunks: BlobPart[] = []
+
+    mediaRecorder.ondataavailable = (e) => chunks.push(e.data)
+    mediaRecorder.onstop = () => {
+      recordedBlob.value = new Blob(chunks, { type: 'audio/webm' })
+      sendToAI(recordedBlob.value)
+    }
+
+    mediaRecorder.start()
+    isRecording.value = true
+
+    // 60초 제한
+    setTimeout(() => stopRecording(), 60000)
+  } catch (err) {
+    console.error('마이크를 켤 수 없습니다:', err)
+    alert('마이크 권한을 허용했는지 확인해주세요.')
+  }
+}
+
+function stopRecording() {
+  if (!mediaRecorder) return
+  mediaRecorder.stop()
+  mediaRecorder = null
+  isRecording.value = false
+}
+
+function handleMicClick() {
+  toggleMic()
+  if (!isRecording.value) {
+    startRecording()
+  } else {
+    stopRecording()
+  }
+}
+
+// ✅ 점수 배열
+const scores = ref<number[]>([])
+// ✅ 질문 카운트
+const questionCount = ref(0)
+const maxQuestions = 5
+
+async function sendToAI(blob: Blob) {
+  if (!blob) return
+  const formData = new FormData()
+  formData.append('file', blob)
+  formData.append('question', questionText.value)
+
+  try {
+    const res = await axios.post('http://localhost:8000/api/evaluate-answer', formData)
+    const newScore = res.data
+    scores.value.push(newScore)
+    questionCount.value++
+
+    if (questionCount.value >= maxQuestions) {
+      // ✅ 질문 모두 끝나면 평균 계산 후 결과로 이동
+      const avgScore = scores.value.reduce((a, b) => a + b, 0) / scores.value.length
+      router.push({ path: '/result', query: { avgScore: Math.round(avgScore) } })
+    } else {
+      // ✅ 다음 질문 자동 요청
+      refreshQuestion()
+    }
+  } catch (err) {
+    console.error(err)
+    alert('답변 평가 중 오류가 발생했습니다.')
+  }
+}
+
 // 카메라 시작
 async function startCamera() {
   try {
-    // HTTPS 또는 localhost 에서만 동작 (브라우저 정책)
     const mediaStream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: false, // 음성은 마이크 로직이랑 별도로
+      audio: false,
     })
 
     stream.value = mediaStream
     cameraOn.value = true
 
+    await nextTick()
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream
     }
@@ -208,8 +285,16 @@ onBeforeUnmount(() => {
 })
 
 async function goNext() {
+  // scores 배열에서 평균 계산
+  const avgScore =
+    scores.value.length > 0
+      ? Math.round(scores.value.reduce((a, b) => a + b, 0) / scores.value.length)
+      : 0
+
+  // 결과 페이지로 이동하면서 쿼리로 전달
   router.push({
     path: '/result',
+    query: { avgScore }
   })
 }
 
@@ -218,12 +303,14 @@ const questionText = ref('질문을 받아오는 중입니다...')
 const loading = ref(false)
 
 async function refreshQuestion() {
+  if (questionCount.value >= maxQuestions) return
+
   loading.value = true
   questionText.value = '질문 생성 중…'
 
   try {
     const res = await axios.get('http://localhost:8000/api/interview-question', {
-      params: { position: position.value }, // 사용자가 선택한 상황 전달
+      params: { position: position.value },
       withCredentials: true
     })
     questionText.value = res.data.question || '질문을 불러오지 못했습니다.'

@@ -1,5 +1,5 @@
 <template>
-  <!-- ⭐ 전체 화면을 채우는 래퍼 추가 -->
+  <!-- 전체 화면을 채우는 래퍼 추가 -->
   <div class="login-page">
     <div class="login-container">
       <h2 class="title">로그인</h2>
@@ -98,7 +98,7 @@ export default {
         }));
 
         // ✅ 페이지 이동 (예시)
-        this.$router.push("/mypage");
+        this.$router.push("/myPage");
       } catch (e) {
         console.error("Login error:", e);
         this.message = "로그인 중 오류가 발생했습니다.";
